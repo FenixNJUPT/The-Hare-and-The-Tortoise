@@ -1,0 +1,104 @@
+C51 COMPILER V9.54   INTERRUPT                                                             11/23/2019 11:41:56 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE INTERRUPT
+OBJECT MODULE PLACED IN .\Objects\interrupt.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE USER\interrupt.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\Drivers;.\USER) DEBUG
+                    - OBJECTEXTEND PRINT(.\Listings\interrupt.lst) TABS(2) OBJECT(.\Objects\interrupt.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          
+   3          extern unsigned char tCount;  //来源于snake.c文件
+   4          extern unsigned char keyValue;  //来源于snake.c文件
+   5          unsigned char wei=0;
+   6          unsigned int counter=0,sec=0;
+   7          extern unsigned char DisplayData[8];
+   8          
+   9          
+  10          sbit LS1=P2^2;
+  11          sbit LS2=P2^3;
+  12          sbit LS3=P2^4;
+  13          sbit LS4=P2^5;
+  14          
+  15          //******定时器0初始化*************//
+  16          void initTimer0()
+  17          {
+  18   1        TMOD |= 0x01;
+  19   1        TL0 = TIMER;
+  20   1        TH0 = TIMER>>8;
+  21   1        TR0 = 1;
+  22   1        ET0 = 1;
+  23   1        EA = 1;
+  24   1      }
+  25          
+  26          //******定时器0中断服务处理*************//
+  27          void timer0Handle() interrupt 1
+  28          { // 10ms中断
+  29   1        TL0 = TIMER;
+  30   1        TH0 = TIMER>>8;
+  31   1        keyValue=scanKey();
+  32   1        tCount++;
+  33   1      }
+  34          
+  35          //******定时器1初始化*************//
+  36          void initTimer1()
+  37          {
+  38   1        TMOD |= 0x01;
+  39   1        TL1 = TIMER2;
+  40   1        TH1 = TIMER2>>8;
+  41   1        TR1 = 1;
+  42   1        ET1 = 1;
+  43   1        EA = 1;
+  44   1      }
+  45          
+  46          //******定时器1中断服务处理*************//
+  47          void timer1Handle() interrupt 3
+  48          { // 50ms中断
+  49   1        TL1 = TIMER2;
+  50   1        TH1 = TIMER2>>8;
+  51   1        P1=0x00;//消隐
+  52   1        DigDisplay(wei);
+  53   1        wei++;
+  54   1        if(wei>3)
+C51 COMPILER V9.54   INTERRUPT                                                             11/23/2019 11:41:56 PAGE 2   
+
+  55   1          wei=0;
+  56   1        counter++;
+  57   1        if(counter>=200)
+  58   1        {
+  59   2          sec++;
+  60   2          counter=0;
+  61   2        }
+  62   1      }
+  63          
+  64          void DigDisplay(unsigned char i)
+  65          {
+  66   1          switch(i)  //位选，选择点亮的数码管，
+  67   1          {
+  68   2            case(0):
+  69   2              LS1=0;LS2=0;LS3=0;LS4=1; break;//显示第0位
+  70   2            case(1):
+  71   2              LS1=0;LS2=0;LS3=1;LS4=0; break;//显示第1位
+  72   2            case(2):
+  73   2              LS1=0;LS2=1;LS3=0;LS4=0; break;//显示第2位
+  74   2            case(3):
+  75   2              LS1=1;LS2=0;LS3=0;LS4=0; break;
+  76   2          }
+  77   1          P1=DisplayData[i];//发送段码
+  78   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    270    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

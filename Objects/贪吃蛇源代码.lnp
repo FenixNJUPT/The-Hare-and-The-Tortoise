@@ -1,0 +1,9 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\snake.obj",
+".\Objects\delay.obj",
+".\Objects\key.obj",
+".\Objects\interrupt.obj",
+".\Objects\8x8lattice.obj" 
+TO ".\Objects\贪吃蛇源代码" 
+PRINT(".\Listings\贪吃蛇源代码.m51") RAMSIZE(256) 
